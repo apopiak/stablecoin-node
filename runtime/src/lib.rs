@@ -226,6 +226,30 @@ impl template::Trait for Runtime {
 	type Event = Event;
 }
 
+pub use stablecoin;
+
+parameter_types! {
+	pub const ExpirationPeriod: BlockNumber = 100;
+	pub const MaximumBids: usize = 1_000;
+	pub const AdjustmentFrequency: BlockNumber = 2;
+	pub const BaseUnit: Coins = 1_000_000;
+	pub const InitialSupply: Coins = 1000 * BaseUnit::get();
+	pub const MinimumSupply: Coins = BaseUnit::get();
+}
+
+impl stablecoin::Trait for Runtime {
+	type Event = Event;
+
+	type ExpirationPeriod = ExpirationPeriod;
+	type MaximumBids = MaximumBids;
+	type AdjustmentFrequency = AdjustmentFrequency;
+	type BaseUnit = BaseUnit;
+	type InitialSupply = InitialSupply;
+	type MinimumSupply = MinimumSupply;
+
+	type CoinPrice = template::Module<Runtime>;
+}
+
 construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
@@ -242,6 +266,7 @@ construct_runtime!(
 		Sudo: sudo::{Module, Call, Config<T>, Storage, Event<T>},
 		// Used for the module template in `./template.rs`
 		TemplateModule: template::{Module, Call, Storage, Event<T>},
+		Stablecoin: stablecoin::{Module, Call, Storage, Event<T>},
 	}
 );
 

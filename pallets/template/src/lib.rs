@@ -18,6 +18,14 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
+use stablecoin::FetchPrice;
+
+impl<T: Trait> FetchPrice<u64> for Module<T> {
+	fn fetch_price() -> u64 {
+		Self::get_price()
+	}
+}
+
 /// The pallet's configuration trait.
 pub trait Trait: system::Trait {
 	// Add other types and constants required to configure this pallet.
@@ -33,6 +41,8 @@ decl_storage! {
 		// Here we are declaring a StorageValue, `Something` as a Option<u32>
 		// `get(fn something)` is the default getter which returns either the stored `u32` or `None` if nothing stored
 		Something get(fn something): Option<u32>;
+
+		Price get(fn get_price): u64 = 1_000_000;
 	}
 }
 
@@ -43,6 +53,8 @@ decl_event!(
 		/// Event `Something` is declared with a parameter of the type `u32` and `AccountId`
 		/// To emit this event, we call the deposit function, from our runtime functions
 		SomethingStored(u32, AccountId),
+
+		NewPrice(u64),
 	}
 );
 
@@ -68,6 +80,16 @@ decl_module! {
 		// Initializing events
 		// this is needed only if you are using events in your pallet
 		fn deposit_event() = default;
+
+		pub fn set_price(origin, new_price: u64) -> dispatch::DispatchResult {
+			let who = ensure_signed(origin)?;
+		
+			Price::put(new_price);
+		
+			Self::deposit_event(RawEvent::NewPrice(new_price));
+		
+			Ok(())
+		}
 
 		/// Just a dummy entry point.
 		/// function that can be called by the external world as an extrinsics call
