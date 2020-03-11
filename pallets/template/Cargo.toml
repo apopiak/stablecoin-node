@@ -14,28 +14,30 @@ safe-mix = { default-features = false, version = '1.0.0' }
 
 [dependencies.frame-support]
 default-features = false
-version = "2.0.0-alpha.2"
-path = "../../../../frame/support"
+version = "2.0.0-alpha.3"
 
 [dependencies.system]
 default-features = false
 package = 'frame-system'
-version = "2.0.0-alpha.2"
-path = "../../../../frame/system"
+version = "2.0.0-alpha.3"
+
+[dependencies.stablecoin]
+default-features = false
+path = '../../../pallet-stablecoin'
+package = 'pallet-stablecoin'
+version = "0.0.*"
+
 [dev-dependencies.sp-core]
 default-features = false
-version = "2.0.0-alpha.2"
-path = "../../../../primitives/core"
+version = "2.0.0-alpha.3"
 
 [dev-dependencies.sp-io]
 default-features = false
-version = "2.0.0-alpha.2"
-path = "../../../../primitives/io"
+version = "2.0.0-alpha.3"
 
 [dev-dependencies.sp-runtime]
 default-features = false
-version = "2.0.0-alpha.2"
-path = "../../../../primitives/runtime"
+version = "2.0.0-alpha.3"
 
 
 [features]
@@ -44,5 +46,6 @@ std = [
     'codec/std',
     'frame-support/std',
     'safe-mix/std',
-    'system/std'
+    'system/std',
+    'stablecoin/std',
 ]
