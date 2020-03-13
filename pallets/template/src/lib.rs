@@ -82,7 +82,7 @@ decl_module! {
 		fn deposit_event() = default;
 
 		pub fn set_price(origin, new_price: u64) -> dispatch::DispatchResult {
-			let who = ensure_signed(origin)?;
+			let _who = ensure_signed(origin)?;
 		
 			Price::put(new_price);
 		

@@ -226,7 +226,7 @@ impl template::Trait for Runtime {
 	type Event = Event;
 }
 
-pub use stablecoin;
+pub use stablecoin::{self, Coins};
 
 parameter_types! {
 	pub const ExpirationPeriod: BlockNumber = 100;
