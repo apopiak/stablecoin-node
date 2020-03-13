@@ -2845,6 +2845,7 @@ dependencies = [
 [[package]]
 name = "pallet-stablecoin"
 version = "0.0.4"
+source = "git+https://github.com/apopiak/pallet-stablecoin#5299cd04dcf4d58a1b3a5f580592e7def67726d8"
 dependencies = [
  "frame-support",
  "frame-system",
