@@ -230,11 +230,12 @@ pub use stablecoin::{self, Coins};
 
 parameter_types! {
 	pub const ExpirationPeriod: BlockNumber = 100;
-	pub const MaximumBids: usize = 1_000;
+	pub const MaximumBids: u64 = 1_000;
 	pub const AdjustmentFrequency: BlockNumber = 2;
 	pub const BaseUnit: Coins = 1_000_000;
 	pub const InitialSupply: Coins = 1000 * BaseUnit::get();
 	pub const MinimumSupply: Coins = BaseUnit::get();
+	pub const MinimumBondPrice: Perbill = Perbill::from_percent(10);
 }
 
 impl stablecoin::Trait for Runtime {
@@ -246,6 +247,7 @@ impl stablecoin::Trait for Runtime {
 	type BaseUnit = BaseUnit;
 	type InitialSupply = InitialSupply;
 	type MinimumSupply = MinimumSupply;
+	type MinimumBondPrice = MinimumBondPrice;
 
 	type CoinPrice = template::Module<Runtime>;
 }
@@ -266,7 +268,7 @@ construct_runtime!(
 		Sudo: sudo::{Module, Call, Config<T>, Storage, Event<T>},
 		// Used for the module template in `./template.rs`
 		TemplateModule: template::{Module, Call, Storage, Event<T>},
-		Stablecoin: stablecoin::{Module, Call, Storage, Event<T>},
+		Stablecoin: stablecoin::{Module, Call, Storage, Config<T>, Event<T>},
 	}
 );
 

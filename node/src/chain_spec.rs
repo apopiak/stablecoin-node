@@ -1,7 +1,7 @@
 use sp_core::{Pair, Public, sr25519};
 use node_template_runtime::{
 	AccountId, AuraConfig, BalancesConfig, GenesisConfig, GrandpaConfig,
-	SudoConfig, SystemConfig, WASM_BINARY, Signature
+	SudoConfig, SystemConfig, WASM_BINARY, Signature, StablecoinConfig
 };
 use sp_consensus_aura::sr25519::{AuthorityId as AuraId};
 use grandpa_primitives::{AuthorityId as GrandpaId};
@@ -138,6 +138,9 @@ fn testnet_genesis(initial_authorities: Vec<(AuraId, GrandpaId)>,
 		}),
 		sudo: Some(SudoConfig {
 			key: root_key,
+		}),
+		stablecoin: Some(StablecoinConfig {
+			shareholders: endowed_accounts.iter().cloned().map(|acc| (acc, 1)).collect(),
 		}),
 	}
 }
