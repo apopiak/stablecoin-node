@@ -35,7 +35,8 @@ sp-transaction-pool = { version = "2.0.0-alpha.3", default-features = false }
 sp-version = { version = "2.0.0-alpha.3", default-features = false }
 
 template = { version = "2.0.0-alpha.3", default-features = false, path = "../pallets/template", package = "pallet-template" }
-stablecoin = { version = "0.0.*", default-features = false, path = "../../pallet-stablecoin", package = "pallet-stablecoin" }
+
+stablecoin = { version = "0.0.*", default-features = false, git = "https://github.com/apopiak/pallet-stablecoin", package = "pallet-stablecoin" }
 
 [build-dependencies]
 wasm-builder-runner = { version = "1.0.5", package = "substrate-wasm-builder-runner" }
@@ -68,4 +69,5 @@ std = [
 	"timestamp/std",
 	"transaction-payment/std",
 	"template/std",
+	"stablecoin/std",
 ]

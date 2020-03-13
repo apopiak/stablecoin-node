@@ -23,7 +23,7 @@ version = "2.0.0-alpha.3"
 
 [dependencies.stablecoin]
 default-features = false
-path = '../../../pallet-stablecoin'
+git = "https://github.com/apopiak/pallet-stablecoin"
 package = 'pallet-stablecoin'
 version = "0.0.*"
 
