@@ -15,8 +15,9 @@ use sp_runtime::{
 	impl_opaque_keys, MultiSignature,
 };
 use sp_runtime::traits::{
-	BlakeTwo256, Block as BlockT, IdentityLookup, Verify, ConvertInto, IdentifyAccount
+	BlakeTwo256, Block as BlockT, IdentityLookup, Verify, ConvertInto, IdentifyAccount, SaturatedConversion,
 };
+use frame_support::debug;
 use sp_api::impl_runtime_apis;
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use grandpa::AuthorityList as GrandpaAuthorityList;
@@ -37,8 +38,12 @@ pub use frame_support::{
 	weights::Weight,
 };
 
-/// Importing a template pallet
-pub use template;
+/// Importing offchain price fetch
+pub use price_fetch;
+/// Importing a price pallet
+pub use price;
+/// Importing the stablecoin pallet
+pub use stablecoin::{self, Coins};
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -221,12 +226,64 @@ impl sudo::Trait for Runtime {
 	type Call = Call;
 }
 
-/// Used for the module template in `./template.rs`
-impl template::Trait for Runtime {
-	type Event = Event;
+/// We need to define the Transaction signer for that using the Key definition
+type SubmitPFTransaction = system::offchain::TransactionSubmitter<
+	price_fetch::crypto::Public,
+	Runtime,
+	UncheckedExtrinsic
+>;
+
+parameter_types! {
+	pub const BlockFetchDur: BlockNumber = 2;
 }
 
-pub use stablecoin::{self, Coins};
+impl price_fetch::Trait for Runtime {
+	type Event = Event;
+	type Call = Call;
+	type SubmitUnsignedTransaction = SubmitPFTransaction;
+	type BlockFetchDur = BlockFetchDur;
+}
+
+impl system::offchain::CreateTransaction<Runtime, UncheckedExtrinsic> for Runtime {
+	type Public = <Signature as Verify>::Signer;
+	type Signature = Signature;
+
+	fn create_transaction<TSigner: system::offchain::Signer<Self::Public, Self::Signature>> (
+		call: Call,
+		public: Self::Public,
+		account: AccountId,
+		index: Index,
+	) -> Option<(Call, <UncheckedExtrinsic as sp_runtime::traits::Extrinsic>::SignaturePayload)> {
+		let period = BlockHashCount::get() as u64;
+		let current_block = System::block_number()
+			.saturated_into::<u64>().saturating_sub(1);
+		let tip = 0;
+		let extra: SignedExtra = (
+			system::CheckVersion::<Runtime>::new(),
+			system::CheckGenesis::<Runtime>::new(),
+			system::CheckEra::<Runtime>::from(generic::Era::mortal(period, current_block)),
+			system::CheckNonce::<Runtime>::from(index),
+			system::CheckWeight::<Runtime>::new(),
+			transaction_payment::ChargeTransactionPayment::<Runtime>::from(tip),
+		);
+
+		let raw_payload = SignedPayload::new(call, extra).map_err(|e| {
+			debug::native::warn!("SignedPayload error: {:?}", e);
+		}).ok()?;
+
+		let signature = TSigner::sign(public, &raw_payload)?;
+		let address = account;
+		let (call, extra, _) = raw_payload.deconstruct();
+		Some((call, (address, signature, extra)))
+	}
+}
+
+/// Used for the module price in `./pallets/price/lib.rs`
+impl price::Trait for Runtime {
+	type Event = Event;
+
+	type OffchainPrice = price_fetch::Module<Runtime>;
+}
 
 parameter_types! {
 	pub const ExpirationPeriod: BlockNumber = 100;
@@ -249,7 +306,7 @@ impl stablecoin::Trait for Runtime {
 	type MinimumSupply = MinimumSupply;
 	type MinimumBondPrice = MinimumBondPrice;
 
-	type CoinPrice = template::Module<Runtime>;
+	type CoinPrice = price::Module<Runtime>;
 }
 
 construct_runtime!(
@@ -266,8 +323,9 @@ construct_runtime!(
 		Balances: balances::{Module, Call, Storage, Config<T>, Event<T>},
 		TransactionPayment: transaction_payment::{Module, Storage},
 		Sudo: sudo::{Module, Call, Config<T>, Storage, Event<T>},
-		// Used for the module template in `./template.rs`
-		TemplateModule: template::{Module, Call, Storage, Event<T>},
+		
+		PriceFetch: price_fetch::{Module, Call, Storage, Event<T>, ValidateUnsigned},
+		Price: price::{Module, Call, Storage, Event<T>},
 		Stablecoin: stablecoin::{Module, Call, Storage, Config<T>, Event<T>},
 	}
 );
@@ -297,6 +355,9 @@ pub type UncheckedExtrinsic = generic::UncheckedExtrinsic<Address, Call, Signatu
 pub type CheckedExtrinsic = generic::CheckedExtrinsic<AccountId, Call, SignedExtra>;
 /// Executive: handles dispatch to the various modules.
 pub type Executive = frame_executive::Executive<Runtime, Block, system::ChainContext<Runtime>, Runtime, AllModules>;
+/// Payload data to be signed when making signed transaction from off-chain workers,
+///   inside `create_transaction` function.
+pub type SignedPayload = generic::SignedPayload<Call, SignedExtra>;
 
 impl_runtime_apis! {
 	impl sp_api::Core<Block> for Runtime {

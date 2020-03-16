@@ -2598,10 +2598,11 @@ dependencies = [
  "pallet-aura",
  "pallet-balances",
  "pallet-grandpa",
+ "pallet-price",
+ "pallet-price-fetch",
  "pallet-randomness-collective-flip",
  "pallet-stablecoin",
  "pallet-sudo",
- "pallet-template",
  "pallet-timestamp",
  "pallet-transaction-payment",
  "parity-scale-codec",
@@ -2810,6 +2811,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-price"
+version = "0.0.1"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "pallet-price-fetch",
+ "pallet-stablecoin",
+ "parity-scale-codec",
+ "safe-mix",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+]
+
+[[package]]
+name = "pallet-price-fetch"
+version = "1.1.0"
+source = "git+https://github.com/apopiak/substrate-offchain-pricefetch?rev=14fe82ecc7e54a554dd1c60fe593f6e171cebe9b#14fe82ecc7e54a554dd1c60fe593f6e171cebe9b"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "num-traits",
+ "pallet-timestamp",
+ "parity-scale-codec",
+ "simple-json",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-session",
+ "sp-std",
+ "substrate-wasm-builder-runner",
+]
+
+[[package]]
 name = "pallet-randomness-collective-flip"
 version = "2.0.0-alpha.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2871,20 +2906,6 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-std",
-]
-
-[[package]]
-name = "pallet-template"
-version = "2.0.0-alpha.3"
-dependencies = [
- "frame-support",
- "frame-system",
- "pallet-stablecoin",
- "parity-scale-codec",
- "safe-mix",
- "sp-core",
- "sp-io",
- "sp-runtime",
 ]
 
 [[package]]
@@ -4653,6 +4674,15 @@ checksum = "94f478ede9f64724c5d173d7bb56099ec3e2d9fc2774aac65d34b8b890405f41"
 dependencies = [
  "arc-swap",
  "libc",
+]
+
+[[package]]
+name = "simple-json"
+version = "0.1.5"
+source = "git+https://github.com/jimmychu0807/simple-json#e5e51a2733a9de76aa6afad30b46cbafa509a13d"
+dependencies = [
+ "num-traits",
+ "paste",
 ]
 
 [[package]]

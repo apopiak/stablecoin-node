@@ -1,8 +1,8 @@
 [package]
 authors = ['Anonymous']
 edition = '2018'
-name = 'pallet-template'
-version = "2.0.0-alpha.3"
+name = 'pallet-price'
+version = "0.0.1"
 license = "Unlicense"
 homepage = "https://substrate.dev"
 repository = "https://github.com/paritytech/substrate/"
@@ -20,6 +20,13 @@ version = "2.0.0-alpha.3"
 default-features = false
 package = 'frame-system'
 version = "2.0.0-alpha.3"
+
+[dependencies.price-fetch]
+default-features = false
+git = "https://github.com/apopiak/substrate-offchain-pricefetch"
+rev = "14fe82ecc7e54a554dd1c60fe593f6e171cebe9b"
+package = "pallet-price-fetch"
+version = "1.1.0"
 
 [dependencies.stablecoin]
 default-features = false
@@ -48,4 +55,5 @@ std = [
     'safe-mix/std',
     'system/std',
     'stablecoin/std',
+    'price-fetch/std',
 ]
