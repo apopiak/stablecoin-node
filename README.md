@@ -1,6 +1,8 @@
-# Substrate Node Template
+# Substrate Stablecoin Sample Node
 
-A new FRAME-based Substrate node, ready for hacking.
+A FRAME-based Substrate node showcasing the [`pallet-stablecoin`] where the price can be pulled via offchain worker.
+
+Based on the Substrate node template.
 
 ## Build
 
