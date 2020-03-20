@@ -1,13 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-/// A FRAME pallet template with necessary imports
-
-/// Feel free to remove or edit this file as needed.
-/// If you change the name of this file, make sure to update its references in runtime/src/lib.rs
-/// If you remove this file, you can remove those references
-
-/// For more guidance on Substrate FRAME, see the example pallet
-/// https://github.com/paritytech/substrate/blob/master/frame/example/src/lib.rs
+/// A price feed pallet
 
 use frame_support::{decl_module, decl_storage, decl_event, decl_error, dispatch, debug::native};
 use system::ensure_signed;
@@ -80,9 +73,9 @@ decl_module! {
 
 		pub fn get_offchain_price(origin) -> dispatch::DispatchResult {
 			let _who = ensure_signed(origin)?;
-			let price = T::OffchainPrice::get_price_for(b"BTC").ok_or(Error::<T>::NoOffchainPrice)?;
+			let price = T::OffchainPrice::get_price_for(b"ETH").ok_or(Error::<T>::NoOffchainPrice)?;
 
-			native::info!("BTC offchain price: {}", price);
+			native::info!("ETH offchain price: {}", price);
 			Price::put(price);
 
 			Self::deposit_event(RawEvent::NewPrice(price));
