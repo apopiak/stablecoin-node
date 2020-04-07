@@ -1,3 +1,5 @@
+deprecated, see the integrated node and pallet repo here: https://github.com/apopiak/stablecoin
+
 # Substrate Stablecoin Sample Node
 
 A FRAME-based Substrate node showcasing the [`pallet-stablecoin`] where the price can be pulled via offchain worker.
